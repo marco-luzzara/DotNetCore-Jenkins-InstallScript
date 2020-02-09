@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\commit-msg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\commit-msg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DllsPath>&quot;$(SolutionDir)src\InstallScript\bin\Release\netcoreapp2.2&quot;</DllsPath>
+    <InstallScriptDllOrigin>&quot;gitUrlForDlls&quot;</InstallScriptDllOrigin>
+  </PropertyGroup>
+
+  <Target Name="PushDlls" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Exec Command="git -C $(DllsPath) init" />
+    <Exec Command="git -C $(DllsPath) remote add origin $(InstallScriptDllOrigin) || git -C $(DllsPath) remote set-url origin $(InstallScriptDllOrigin)" />
+    <Exec Command="git -C $(DllsPath) add ." />
+    <Exec Command="git -C $(DllsPath) commit -m &quot;push from csproj's target&quot;" />
+    <Exec Command="git -C $(DllsPath) push -f origin master" />
+    <Exec Command="echo 'pushed of dlls complete'"/>
+  </Target>
+
+</Project>

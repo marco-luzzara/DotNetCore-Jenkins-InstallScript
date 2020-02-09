@@ -1,0 +1,5 @@
+#!/bin/sh
+test "" != "$(grep -E '^(([rR]if( |.) *)?#[[:digit:]]+)' "$1")" || {
+	echo 'Cannot commit with a message inconsistent with the pattern "rif. #0000: commit message"'
+	exit 1
+}
